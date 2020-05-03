@@ -36,7 +36,40 @@ class CCBaseSender {
 			$this->chromecast->connect();
 		}
 	}
-	
+
+	// Connect to any existing app for media control
+	public function reconnect() {
+		$this->chromecast->transportid = "";
+		$this->chromecast->cc_connect();
+		$s = $this->chromecast->getStatus();
+
+		// Grab the appid
+		preg_match("/\"appId\":\"([^\"]*)/",$s,$m);
+
+		$this->appid = $m[1];
+		$this->chromecast->getStatus();
+		$this->chromecast->connect();
+	}
+
+	// Attempt to relink media session id to class so we can control the stream.
+	public function linkMedia() {
+		$attempts = 5;
+		while (empty($this->mediaid) && $attempts > 0)
+		{
+			$this->chromecast->sendMessage("urn:x-cast:com.google.cast.media",'{"type":"GET_STATUS", "requestId":1}');
+			$r = $this->chromecast->getCastMessage();
+			$r = explode("{", $r);
+			array_shift($r);
+			$r = "{" . implode("{", $r);
+			$data = json_decode($r);
+
+			if (isset($data->status) && isset($data->status[0]->mediaSessionId))
+				$this->mediaid = $data->status[0]->mediaSessionId;
+			else
+				sleep(1);
+			$attempts--;
+		}
+	}
 }
 
 ?>

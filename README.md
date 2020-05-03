@@ -77,6 +77,40 @@ require_once("Chromecast.php");
 print_r(Chromecast::scan());
 ```
 
+### GlobalMediaPlayer
+
+As an extension to the original work, I have made support for the global media player.
+If you are playing a YouTube video or a Spotify song, it can be really useful to control that mediastream by connecting to it.
+
+```php
+require_once("Chromecast.php");
+
+// Create Chromecast object and give IP and Port
+$cc = new Chromecast("217.63.63.259","8009");
+
+$cc->cc_connect();
+$cc->connect();
+
+$cc->GMP->UnMute();
+$cc->GMP->SetVolume(1);
+sleep(5);
+$cc->GMP->pause();
+print_r($cc->GMP->getStatus());
+sleep(5);
+$cc->GMP->restart();
+sleep(5);
+$cc->GMP->seek(100);
+sleep(5);
+$cc->GMP->SetVolume(0.5);
+sleep(15);
+$cc->GMP->SetVolume(1); // Turn the volume back up
+$cc->GMP->Mute();
+sleep(20);
+$cc->GMP->UnMute();
+sleep(5);
+$cc->GMP->Stop();
+```
+
 ## NOTES
 
 The default port a Chromecast uses is 8009.

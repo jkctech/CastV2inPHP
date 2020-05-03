@@ -3,6 +3,7 @@
 // www.chrisridings.com
 require_once ("CCprotoBuf.php");
 require_once ("CCDefaultMediaPlayer.php");
+require_once ("CCGlobalMediaPlayer.php");
 require_once ("CCPlexPlayer.php");
 require_once ("mdns.php");
 
@@ -45,9 +46,13 @@ class Chromecast
 		$this->lastip = $ip;
 		$this->lastport = $port;
 		$this->lastactivetime = time();
+		
 		// Create an instance of the DMP for this CCDefaultMediaPlayer
 		$this->DMP = new CCDefaultMediaPlayer($this);
 		$this->Plex = new CCPlexPlayer($this);
+
+		// Create instance of the GlobalMediaPlayer
+		$this->GMP = new CCGlobalMediaPlayer($this);
 	}
 	
 	public static function scan($wait = 15)
